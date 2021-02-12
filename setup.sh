@@ -28,7 +28,7 @@ sudo apt autoclean
 sudo chsh -s /usr/bin/zsh ${USER}
 cp .p10k.zsh .zshrc ${HOME}/
 
-step "Enter zsh"
+echo "$(tput setaf 13)Enter zsh$(tput sgr0)"
 zsh
 
 step "Get conda"
