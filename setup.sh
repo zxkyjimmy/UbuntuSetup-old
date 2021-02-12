@@ -45,6 +45,9 @@ cp .p10k.zsh .zshrc ${HOME}/
 sudo cp /etc/environment /etc/environment.orig
 sudo cp environment /etc/environment
 
+step "Set Time Zone"
+sudo timedatectl set-timezone Asia/Taipei
+
 step "Get conda"
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
 bash miniconda.sh -b -p $HOME/miniconda
