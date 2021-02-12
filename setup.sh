@@ -11,7 +11,7 @@ git config --global user.email "zxkyjimmy@gmail.com"
 
 step "Get useful commands"
 sudo apt update
-sudo apt install -y git curl zsh wget htop vim tree openssh-server lm-sensros \
+sudo apt install -y git curl zsh wget htop vim tree openssh-server lm-sensors \
                     python3-pip python-is-python3
 
 step "Get oh-my-zsh"
