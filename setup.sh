@@ -1,9 +1,11 @@
-#! /usr/bin/bash
+#!/usr/bin/bash
 set -euo pipefail
 
 function step(){
   echo "$(tput setaf 10)$1$(tput sgr0)"
 }
+
+Port="${1:-22}"
 
 step "Configuring git"
 git config --global user.name "Yen-Chi Chen"
@@ -13,6 +15,9 @@ step "Get useful commands"
 sudo apt update
 sudo apt install -y git curl zsh wget htop vim tree openssh-server lm-sensors \
                     python3-pip python-is-python3
+
+step "Set ssh port"
+echo "Port $Port" | sudo tee -a /etc/ssh/sshd_config
 
 step "Get Font"
 wget https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete%20Mono.ttf
