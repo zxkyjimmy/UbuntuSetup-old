@@ -18,6 +18,7 @@ sudo apt install -y git curl zsh wget htop vim tree openssh-server lm-sensors \
 
 step "Set ssh port"
 echo "Port $Port" | sudo tee -a /etc/ssh/sshd_config
+sudo service ssh restart
 
 step "Get Font"
 wget https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete%20Mono.ttf
@@ -29,6 +30,7 @@ sudo fc-cache -f -v
 
 step "Tweak theme and terminal"
 PROFILE_ID=$( gsettings get org.gnome.Terminal.ProfilesList default | xargs echo )
+dconf write /org/gnome/terminal/legacy/profiles:/:${PROFILE_ID}/use-system-font false
 dconf write /org/gnome/terminal/legacy/profiles:/:${PROFILE_ID}/font "'SauceCodePro Nerd Font Mono Regular 14'"
 
 step "Get oh-my-zsh"
@@ -37,11 +39,7 @@ git clone https://github.com/zsh-users/zsh-autosuggestions.git ${HOME}/.oh-my-zs
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${HOME}/.oh-my-zsh/plugins/zsh-syntax-highlighting
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 
-step "clean up"
-sudo apt update
-sudo apt upgrade -y
-sudo apt autoremove -y
-sudo apt autoclean
+step "Copy environment"
 sudo chsh -s /usr/bin/zsh ${USER}
 cp .p10k.zsh .zshrc ${HOME}/
 sudo cp /etc/environment /etc/environment.orig
@@ -70,3 +68,9 @@ sudo mv bazel.gpg /etc/apt/trusted.gpg.d/
 echo "deb [arch=amd64] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
 sudo apt update
 sudo apt install -y bazel
+
+step "clean up"
+sudo apt update
+sudo apt upgrade -y
+sudo apt autoremove -y
+sudo apt autoclean
