@@ -76,9 +76,9 @@ step "Install Podman"
 . /etc/os-release
 echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
 curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | sudo apt-key add -
-sudo apt-get update
-sudo apt-get -y upgrade
-sudo apt-get -y install podman
+sudo apt update
+sudo apt upgrade -y
+sudo apt install -y podman
 
 step "Install nvidia-container-runtime"
 curl -s -L https://nvidia.github.io/nvidia-container-runtime/gpgkey | \
@@ -86,7 +86,21 @@ curl -s -L https://nvidia.github.io/nvidia-container-runtime/gpgkey | \
 distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
 curl -s -L https://nvidia.github.io/nvidia-container-runtime/$distribution/nvidia-container-runtime.list | \
   sudo tee /etc/apt/sources.list.d/nvidia-container-runtime.list
-sudo apt-get update
+sudo apt update
+sudo apt install -y nvidia-container-runtime
+sudo sed -E 's;#?(no-cgroups =).*;\1 true;g' -i /etc/nvidia-container-runtime/config.toml
+sudo mkdir -p /usr/share/containers/oci/hooks.d
+cat <<EOF | sudo tee /usr/share/containers/oci/hooks.d/nvidia-container-runtime.json
+{
+  "version": "1.0.0",
+  "hook": {
+    "path": "/usr/bin/nvidia-container-runtime-hook",
+    "args": ["nvidia-container-runtime-hook", "prestart"]
+  },
+  "when": { "always": true },
+  "stages": ["prestart"]
+}
+EOF
 
 step "clean up"
 sudo apt update
