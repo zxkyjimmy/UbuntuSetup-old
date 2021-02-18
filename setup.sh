@@ -17,7 +17,7 @@ sudo apt install -y git curl zsh wget htop vim tree openssh-server lm-sensors \
                     python3-pip python-is-python3
 
 step "Set ssh port"
-echo "Port $Port" | sudo tee -a /etc/ssh/sshd_config
+sudo sed -E 's;#?(Port ).*;\1'"$Port"';g' -i /etc/ssh/sshd_config
 sudo service ssh restart
 
 step "Get Font"
