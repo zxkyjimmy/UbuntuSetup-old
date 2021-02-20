@@ -14,7 +14,7 @@ git config --global user.email "zxkyjimmy@gmail.com"
 step "Get useful commands"
 sudo apt update
 sudo apt install -y git curl zsh wget htop vim tree openssh-server lm-sensors \
-                    python3-pip python-is-python3
+                    cmake python3-pip python-is-python3
 
 step "Set ssh port"
 sudo sed -E 's;#?(Port ).*;\1'"$Port"';g' -i /etc/ssh/sshd_config
