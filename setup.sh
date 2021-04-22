@@ -80,6 +80,14 @@ sudo apt update
 sudo apt upgrade -y
 sudo apt install -y podman
 
+step "Rootless podman with OverlayFS"
+sudo apt install -y fuse-overlayfs
+mkdir -p ~/.config/containers
+cp /etc/containers/storage.conf ~/.config/containers
+sed -E 's;#?(mount_program =).*;\1 "/usr/bin/fuse-overlayfs";g' -i ~/.config/containers/storage.conf
+sed -E 's;runroot = ?(.+);# runroot = \1;g' -i ~/.config/containers/storage.conf
+sed -E 's;graphroot = ?(.+);# graphroot = \1;g' -i ~/.config/containers/storage.conf
+
 step "Install nvidia-container-runtime"
 curl -s -L https://nvidia.github.io/nvidia-container-runtime/gpgkey | \
   sudo apt-key add -
