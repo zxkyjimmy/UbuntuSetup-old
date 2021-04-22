@@ -42,8 +42,6 @@ git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$
 step "Copy environment"
 sudo chsh -s /usr/bin/zsh ${USER}
 cp .p10k.zsh .zshrc ${HOME}/
-sudo cp /etc/environment /etc/environment.orig
-sudo cp environment /etc/environment
 
 step "Set Time Zone"
 sudo timedatectl set-timezone Asia/Taipei
@@ -64,6 +62,7 @@ sudo apt update
 sudo apt install -y cuda-drivers
 sudo apt install -y cuda-11-2
 sudo apt install -y libcudnn8 libcudnn8-dev
+sudo sed -E 's;PATH="?(.+)";PATH="/usr/local/cuda/bin:\1";g' -i /etc/environment
 
 step "Install Bazel"
 sudo apt install -y curl gnupg
