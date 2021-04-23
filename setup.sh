@@ -19,6 +19,7 @@ sudo apt install -y git curl zsh wget htop vim tree openssh-server lm-sensors \
 step "Set ssh port"
 sudo sed -E 's;#?(Port ).*;\1'"$Port"';g' -i /etc/ssh/sshd_config
 sudo service ssh restart
+cat /dev/zero | ssh-keygen -b 4096 -q -N ""
 
 step "Get Font"
 wget https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete.ttf
