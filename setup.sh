@@ -7,6 +7,11 @@ function step(){
 
 Port="${1:-22}"
 
+step "Update all packages"
+sudo apt update
+sudo apt upgrade -y
+sudo apt autoremove -y
+
 step "Configuring git"
 git config --global user.name "Yen-Chi Chen"
 git config --global user.email "zxkyjimmy@gmail.com"
