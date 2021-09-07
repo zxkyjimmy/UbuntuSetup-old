@@ -63,7 +63,7 @@ sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda
 sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
 sudo apt update
 sudo apt install -y cuda-drivers
-sudo apt install -y cuda-11-2
+sudo apt install -y cuda-11-4
 sudo apt install -y libcudnn8 libcudnn8-dev
 sudo sed -E 's;PATH="?(.+)";PATH="/usr/local/cuda/bin:\1";g' -i /etc/environment
 
@@ -112,6 +112,10 @@ cat <<EOF | sudo tee /usr/share/containers/oci/hooks.d/nvidia-container-runtime.
   "stages": ["prestart"]
 }
 EOF
+
+step "stop cups-browsed"
+sudo systemctl stop cups-browsed.service
+sudo systemctl disable cups-browsed.service
 
 step "clean up"
 sudo apt update
