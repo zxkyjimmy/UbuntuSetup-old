@@ -26,6 +26,9 @@ sudo apt update
 sudo apt install -y git curl zsh wget htop vim tree openssh-server lm-sensors \
                     cmake python3-pip python-is-python3
 
+step "Pip install protobuf"
+sudo pip install -U protobuf
+
 step "Set ssh port&key"
 sudo sed -E 's;#?(Port ).*;\1'"$Port"';g' -i /etc/ssh/sshd_config
 sudo service ssh restart
@@ -86,25 +89,15 @@ sudo apt update
 sudo apt install -y bazel
 
 step "Install Podman"
-. /etc/os-release
-echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | sudo apt-key add -
 sudo apt update
 sudo apt upgrade -y
 sudo apt install -y podman
-
-step "Rootless podman with OverlayFS"
-sudo apt install -y fuse-overlayfs
-mkdir -p ~/.config/containers
-cp /etc/containers/storage.conf ~/.config/containers
-sed -E 's;#?(mount_program =).*;\1 "/usr/bin/fuse-overlayfs";g' -i ~/.config/containers/storage.conf
-sed -E 's;runroot = ?(.+);# runroot = \1;g' -i ~/.config/containers/storage.conf
-sed -E 's;graphroot = ?(.+);# graphroot = \1;g' -i ~/.config/containers/storage.conf
+sudo sed -E 's;# unqualified-search-registries = \["example.com"\];unqualified-search-registries = \["docker.io"\];1' -i /etc/containers/registries.conf
 
 step "Install nvidia-container-runtime"
 curl -s -L https://nvidia.github.io/nvidia-container-runtime/gpgkey | \
   sudo apt-key add -
-distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+distribution=$(. /etc/os-release;echo ubuntu20.04)
 curl -s -L https://nvidia.github.io/nvidia-container-runtime/$distribution/nvidia-container-runtime.list | \
   sudo tee /etc/apt/sources.list.d/nvidia-container-runtime.list
 sudo apt update
