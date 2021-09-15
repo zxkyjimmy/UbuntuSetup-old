@@ -7,6 +7,11 @@ function step(){
 
 Port="${1:-22}"
 
+step "Set locale"
+sudo locale-gen en_US.UTF-8
+sudo locale-gen zh_TW.UTF-8
+export LC_ALL=en_US.UTF-8
+
 step "Update all packages"
 sudo apt update
 sudo apt upgrade -y
