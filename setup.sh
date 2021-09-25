@@ -17,6 +17,9 @@ sudo apt update
 sudo apt upgrade -y
 sudo apt autoremove -y
 
+step "Stop unattended upgrade"
+sudo sed -E 's;APT::Periodic::Unattended-Upgrade "1"\;;APT::Periodic::Unattended-Upgrade "0"\;;g' -i /etc/apt/apt.conf.d/20auto-upgrades
+
 step "Configuring git"
 git config --global user.name "Yen-Chi Chen"
 git config --global user.email "zxkyjimmy@gmail.com"
