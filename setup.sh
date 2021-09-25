@@ -20,6 +20,7 @@ sudo apt autoremove -y
 step "Configuring git"
 git config --global user.name "Yen-Chi Chen"
 git config --global user.email "zxkyjimmy@gmail.com"
+git config --global pull.rebase false
 
 step "Get useful commands"
 sudo apt update
