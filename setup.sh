@@ -28,7 +28,7 @@ git config --global pull.rebase false
 step "Get useful commands"
 sudo apt update
 sudo apt install -y git curl zsh wget htop vim tree openssh-server lm-sensors \
-                    cmake python3-pip python-is-python3
+                    cmake tmux python3-pip python-is-python3
 
 step "Pip install protobuf"
 sudo pip install -U protobuf
@@ -61,7 +61,7 @@ git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$
 
 step "Copy environment"
 sudo chsh -s /usr/bin/zsh ${USER}
-cp .p10k.zsh .zshrc ${HOME}/
+cp .p10k.zsh .zshrc .tmux.conf ${HOME}/
 
 step "Set Time Zone"
 sudo timedatectl set-timezone Asia/Taipei
