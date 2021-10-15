@@ -99,7 +99,6 @@ curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:
 sudo apt update
 sudo apt upgrade -y
 sudo apt install -y podman
-sudo systemctl enable podman.socket
 
 step "Install nvidia-container-runtime"
 curl -s -L https://nvidia.github.io/nvidia-container-runtime/gpgkey | \
