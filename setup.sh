@@ -94,8 +94,8 @@ sudo apt install -y bazel
 
 step "Install Podman"
 . /etc/os-release
-echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key" | sudo apt-key add -
+echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_21.04/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_21.04/Release.key" | sudo apt-key add -
 sudo apt update
 sudo apt upgrade -y
 sudo apt install -y podman
@@ -108,17 +108,23 @@ curl -s -L https://nvidia.github.io/nvidia-container-runtime/$distribution/nvidi
   sudo tee /etc/apt/sources.list.d/nvidia-container-runtime.list
 sudo apt update
 sudo apt install -y nvidia-container-runtime
-sudo sed -E 's;#?(no-cgroups =).*;\1 true;g' -i /etc/nvidia-container-runtime/config.toml
+sudo sed -i 's/^#no-cgroups = false/no-cgroups = true/;' /etc/nvidia-container-runtime/config.toml
 sudo mkdir -p /usr/share/containers/oci/hooks.d
-cat <<EOF | sudo tee /usr/share/containers/oci/hooks.d/nvidia-container-runtime.json
+cat <<EOF | sudo tee /usr/share/containers/oci/hooks.d/oci-nvidia-hook.json
 {
-  "version": "1.0.0",
-  "hook": {
-    "path": "/usr/bin/nvidia-container-runtime-hook",
-    "args": ["nvidia-container-runtime-hook", "prestart"]
-  },
-  "when": { "always": true },
-  "stages": ["prestart"]
+    "version": "1.0.0",
+    "hook": {
+        "path": "/usr/bin/nvidia-container-toolkit",
+        "args": ["nvidia-container-toolkit", "prestart"],
+        "env": [
+            "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        ]
+    },
+    "when": {
+        "always": true,
+        "commands": [".*"]
+    },
+    "stages": ["prestart"]
 }
 EOF
 
