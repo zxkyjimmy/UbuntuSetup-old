@@ -29,6 +29,7 @@ step "Get useful commands"
 sudo apt update
 sudo apt install -y git curl zsh wget htop vim tree openssh-server lm-sensors \
                     cmake tmux python3-pip python-is-python3
+sudo apt install -y gcc-10 g++-10
 
 step "Pip install protobuf"
 sudo pip install -U protobuf
