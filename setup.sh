@@ -52,7 +52,7 @@ sudo fc-cache -f -v
 step "Tweak theme and terminal"
 PROFILE_ID=$( gsettings get org.gnome.Terminal.ProfilesList default | xargs echo )
 dconf write /org/gnome/terminal/legacy/profiles:/:${PROFILE_ID}/use-system-font false
-dconf write /org/gnome/terminal/legacy/profiles:/:${PROFILE_ID}/font "'SauceCodePro Nerd Font Regular 14'"
+dconf write /org/gnome/terminal/legacy/profiles:/:${PROFILE_ID}/font "'CaskaydiaCove Nerd Font Regular 14'"
 
 step "Get oh-my-zsh"
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" "" --unattended
@@ -60,9 +60,13 @@ git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.
 git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 
+step "Get Oh my tmux"
+git clone https://github.com/gpakosz/.tmux.git ${HOME}/.tmux
+ln -s -f ${HOME}/.tmux/.tmux.conf ${HOME}
+
 step "Copy environment"
 sudo chsh -s /usr/bin/zsh ${USER}
-cp .p10k.zsh .zshrc .tmux.conf ${HOME}/
+cp .p10k.zsh .zshrc .tmux.conf.local ${HOME}/
 
 step "Set Time Zone"
 sudo timedatectl set-timezone Asia/Taipei
