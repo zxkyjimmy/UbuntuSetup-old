@@ -17,6 +17,9 @@ sudo apt update
 sudo apt upgrade -y
 sudo apt autoremove -y
 
+step "Stop unattended upgrade"
+sudo sed -E 's;APT::Periodic::Unattended-Upgrade "1"\;;APT::Periodic::Unattended-Upgrade "0"\;;g' -i /etc/apt/apt.conf.d/20auto-upgrades
+
 step "Configuring git"
 git config --global user.name "Yen-Chi Chen"
 git config --global user.email "zxkyjimmy@gmail.com"
@@ -24,7 +27,7 @@ git config --global user.email "zxkyjimmy@gmail.com"
 step "Get useful commands"
 sudo apt update
 sudo apt install -y git curl zsh wget htop vim tree openssh-server lm-sensors \
-                    cmake python3-pip python-is-python3
+                    cmake tmux python3-pip python-is-python3
 
 step "Set ssh port&key"
 sudo sed -E 's;#?(Port ).*;\1'"$Port"';g' -i /etc/ssh/sshd_config
@@ -48,13 +51,17 @@ dconf write /org/gnome/terminal/legacy/profiles:/:${PROFILE_ID}/font "'SauceCode
 
 step "Get oh-my-zsh"
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" "" --unattended
-git clone https://github.com/zsh-users/zsh-autosuggestions.git ${HOME}/.oh-my-zsh/plugins/zsh-autosuggestions
-git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${HOME}/.oh-my-zsh/plugins/zsh-syntax-highlighting
+git clone https://github.com/zsh-users/zsh-autosuggestions.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+
+step "Get Oh my tmux"
+git clone https://github.com/gpakosz/.tmux.git ${HOME}/.tmux
+ln -s -f ${HOME}/.tmux/.tmux.conf ${HOME}
 
 step "Copy environment"
 sudo chsh -s /usr/bin/zsh ${USER}
-cp .p10k.zsh .zshrc ${HOME}/
+cp .p10k.zsh .zshrc .tmux.conf.local ${HOME}/
 
 step "Set Time Zone"
 sudo timedatectl set-timezone Asia/Taipei
@@ -73,7 +80,7 @@ sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda
 sudo add-apt-repository -y "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
 sudo apt update
 sudo apt install -y cuda-drivers
-sudo apt install -y cuda-11-4
+sudo apt install -y cuda-11-5
 sudo apt install -y libcudnn8 libcudnn8-dev
 sudo sed -E 's;PATH="?(.+)";PATH="/usr/local/cuda/bin:\1";g' -i /etc/environment
 
@@ -111,15 +118,21 @@ sudo apt update
 sudo apt install -y nvidia-container-runtime
 sudo sed -E 's;#?(no-cgroups =).*;\1 true;g' -i /etc/nvidia-container-runtime/config.toml
 sudo mkdir -p /usr/share/containers/oci/hooks.d
-cat <<EOF | sudo tee /usr/share/containers/oci/hooks.d/nvidia-container-runtime.json
+cat <<EOF | sudo tee /usr/share/containers/oci/hooks.d/oci-nvidia-hook.json
 {
-  "version": "1.0.0",
-  "hook": {
-    "path": "/usr/bin/nvidia-container-runtime-hook",
-    "args": ["nvidia-container-runtime-hook", "prestart"]
-  },
-  "when": { "always": true },
-  "stages": ["prestart"]
+    "version": "1.0.0",
+    "hook": {
+        "path": "/usr/bin/nvidia-container-toolkit",
+        "args": ["nvidia-container-toolkit", "prestart"],
+        "env": [
+            "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+        ]
+    },
+    "when": {
+        "always": true,
+        "commands": [".*"]
+    },
+    "stages": ["prestart"]
 }
 EOF
 
