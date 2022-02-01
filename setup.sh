@@ -29,7 +29,6 @@ step "Get useful commands"
 sudo apt update
 sudo apt install -y git curl zsh wget htop vim tree openssh-server lm-sensors \
                     cmake tmux python3-pip python-is-python3
-sudo apt install -y gcc-10 g++-10
 
 step "Pip install protobuf"
 sudo pip install -U protobuf
@@ -85,7 +84,7 @@ sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda
 sudo add-apt-repository -y "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
 sudo apt update
 sudo apt install -y cuda-drivers
-sudo apt install -y cuda-11-5
+sudo apt install -y cuda-11-6
 sudo apt install -y libcudnn8 libcudnn8-dev
 sudo sed -E 's;PATH="?(.+)";PATH="/usr/local/cuda/bin:\1";g' -i /etc/environment
 
