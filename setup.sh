@@ -98,9 +98,6 @@ sudo apt update
 sudo apt install -y bazel
 
 step "Install Podman"
-. /etc/os-release
-echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_21.04/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_21.04/Release.key" | sudo apt-key add -
 sudo apt update
 sudo apt upgrade -y
 sudo apt install -y podman
