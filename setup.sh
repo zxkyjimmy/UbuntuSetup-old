@@ -23,11 +23,16 @@ sudo sed -E 's;APT::Periodic::Unattended-Upgrade "1"\;;APT::Periodic::Unattended
 step "Configuring git"
 git config --global user.name "Yen-Chi Chen"
 git config --global user.email "zxkyjimmy@gmail.com"
+git config --global pull.rebase false
 
 step "Get useful commands"
 sudo apt update
 sudo apt install -y git curl zsh wget htop vim tree openssh-server lm-sensors \
                     cmake tmux python3-pip python-is-python3
+sudo apt install -y python3-packaging # To build from source of TensorFlow
+
+step "Pip install protobuf"
+sudo pip install -U protobuf
 
 step "Set ssh port&key"
 sudo sed -E 's;#?(Port ).*;\1'"$Port"';g' -i /etc/ssh/sshd_config
@@ -80,7 +85,7 @@ sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda
 sudo add-apt-repository -y "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
 sudo apt update
 sudo apt install -y cuda-drivers
-sudo apt install -y cuda-11-5
+sudo apt install -y cuda-11-6
 sudo apt install -y libcudnn8 libcudnn8-dev
 sudo sed -E 's;PATH="?(.+)";PATH="/usr/local/cuda/bin:\1";g' -i /etc/environment
 
@@ -94,29 +99,21 @@ sudo apt install -y bazel
 
 step "Install Podman"
 . /etc/os-release
-echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | sudo apt-key add -
+echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_21.04/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_21.04/Release.key" | sudo apt-key add -
 sudo apt update
 sudo apt upgrade -y
 sudo apt install -y podman
 
-step "Rootless podman with OverlayFS"
-sudo apt install -y fuse-overlayfs
-mkdir -p ~/.config/containers
-cp /etc/containers/storage.conf ~/.config/containers
-sed -E 's;#?(mount_program =).*;\1 "/usr/bin/fuse-overlayfs";g' -i ~/.config/containers/storage.conf
-sed -E 's;runroot = ?(.+);# runroot = \1;g' -i ~/.config/containers/storage.conf
-sed -E 's;graphroot = ?(.+);# graphroot = \1;g' -i ~/.config/containers/storage.conf
-
 step "Install nvidia-container-runtime"
 curl -s -L https://nvidia.github.io/nvidia-container-runtime/gpgkey | \
   sudo apt-key add -
-distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+distribution=$(. /etc/os-release;echo ubuntu20.04)
 curl -s -L https://nvidia.github.io/nvidia-container-runtime/$distribution/nvidia-container-runtime.list | \
   sudo tee /etc/apt/sources.list.d/nvidia-container-runtime.list
 sudo apt update
 sudo apt install -y nvidia-container-runtime
-sudo sed -E 's;#?(no-cgroups =).*;\1 true;g' -i /etc/nvidia-container-runtime/config.toml
+sudo sed -i 's/^#no-cgroups = false/no-cgroups = true/;' /etc/nvidia-container-runtime/config.toml
 sudo mkdir -p /usr/share/containers/oci/hooks.d
 cat <<EOF | sudo tee /usr/share/containers/oci/hooks.d/oci-nvidia-hook.json
 {
