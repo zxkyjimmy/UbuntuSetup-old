@@ -79,14 +79,19 @@ conda init zsh
 conda config --set auto_activate_base false
 
 step "Get CUDA"
-wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
-sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
-sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
-sudo add-apt-repository -y "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
-sudo apt update
-sudo apt install -y cuda-drivers
-sudo apt install -y cuda-11-6
-sudo apt install -y libcudnn8 libcudnn8-dev
+#wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
+#sudo mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
+#sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
+#curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub | gpg --dearmor > cuda.gpg
+#sudo mv cuda.gpg /etc/apt/trusted.gpg.d/
+#sudo add-apt-repository -y "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
+#sudo apt update
+#sudo apt install -y cuda-drivers
+#sudo apt install -y cuda-11-6
+#sudo apt install -y libcudnn8 libcudnn8-dev
+sudo ubuntu-drivers install
+wget https://developer.download.nvidia.com/compute/cuda/11.6.2/local_installers/cuda_11.6.2_510.47.03_linux.run
+sudo sh cuda_11.6.2_510.47.03_linux.run --silent --toolkit
 sudo sed -E 's;PATH="?(.+)";PATH="/usr/local/cuda/bin:\1";g' -i /etc/environment
 
 step "Install Bazel"
@@ -101,10 +106,12 @@ step "Install Podman"
 sudo apt update
 sudo apt upgrade -y
 sudo apt install -y podman
+sudo sed -E 's;# unqualified-search-registries = \["example.com"\];unqualified-search-registries = \["docker.io"\];1' -i /etc/containers/registries.conf
 
 step "Install nvidia-container-runtime"
-curl -s -L https://nvidia.github.io/nvidia-container-runtime/gpgkey | \
-  sudo apt-key add -
+curl -fsSL https://nvidia.github.io/nvidia-container-runtime/gpgkey | \
+  gpg --dearmor > nvidia-container-runtime.gpg
+sudo mv nvidia-container-runtime.gpg /etc/apt/trusted.gpg.d/
 distribution=$(. /etc/os-release;echo ubuntu20.04)
 curl -s -L https://nvidia.github.io/nvidia-container-runtime/$distribution/nvidia-container-runtime.list | \
   sudo tee /etc/apt/sources.list.d/nvidia-container-runtime.list
