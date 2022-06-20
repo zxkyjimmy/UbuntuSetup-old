@@ -33,7 +33,7 @@ sudo apt install -y python3-packaging # To build from source of TensorFlow
 
 step "Get YAPF"
 sudo apt install -y python3-yapf
-[ -d ${HOME}/.config/yapf ] || mkdir ${HOME}/.config/yapf
+[ -d ${HOME}/.config/yapf ] || mkdir -p ${HOME}/.config/yapf
 cat <<EOF | tee ${HOME}/.config/yapf/style
 [style]
 based_on_style = yapf
