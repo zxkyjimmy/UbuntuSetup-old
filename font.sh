@@ -6,8 +6,9 @@ function step(){
 }
 
 step "Get Font"
-wget https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete%20Mono.ttf
-wget https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CascadiaCode/Regular/complete/Caskaydia%20Cove%20Regular%20Nerd%20Font%20Complete%20Mono.otf
+FONTBASE=https://github.com/ryanoasis/nerd-fonts/raw/5454877c01e5efb4b902151655f75d950678dc34/patched-fonts
+wget $FONTBASE/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete%20Mono.ttf
+wget $FONTBASE/CascadiaCode/Regular/complete/Caskaydia%20Cove%20Nerd%20Font%20Complete%20Mono%20Regular.otf
 mkdir -p ~/.local/share/fonts
 cp *.ttf ~/.local/share/fonts
 cp *.otf ~/.local/share/fonts

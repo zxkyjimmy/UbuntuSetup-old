@@ -50,8 +50,9 @@ ssh-keygen -b 4096 -t rsa -f ~/.ssh/id_rsa -q -N "" <<< y
 echo "" # newline
 
 step "Get Font"
-wget https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete.ttf
-wget https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/CascadiaCode/Regular/complete/Caskaydia%20Cove%20Regular%20Nerd%20Font%20Complete.otf
+FONTBASE=https://github.com/ryanoasis/nerd-fonts/raw/5454877c01e5efb4b902151655f75d950678dc34/patched-fonts
+wget $FONTBASE/SourceCodePro/Regular/complete/Sauce%20Code%20Pro%20Nerd%20Font%20Complete%20Mono.ttf
+wget $FONTBASE/CascadiaCode/Regular/complete/Caskaydia%20Cove%20Nerd%20Font%20Complete%20Mono%20Regular.otf
 mkdir -p ~/.local/share/fonts
 cp *.ttf ~/.local/share/fonts
 cp *.otf ~/.local/share/fonts
@@ -60,7 +61,7 @@ sudo fc-cache -f -v
 step "Tweak theme and terminal"
 PROFILE_ID=$( gsettings get org.gnome.Terminal.ProfilesList default | xargs echo )
 dconf write /org/gnome/terminal/legacy/profiles:/:${PROFILE_ID}/use-system-font false
-dconf write /org/gnome/terminal/legacy/profiles:/:${PROFILE_ID}/font "'SauceCodePro Nerd Font Regular 14'"
+dconf write /org/gnome/terminal/legacy/profiles:/:${PROFILE_ID}/font "'SauceCodePro Nerd Font Mono Regular 14'"
 
 step "Get oh-my-zsh"
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" "" --unattended
@@ -87,15 +88,12 @@ conda init zsh
 conda config --set auto_activate_base false
 
 step "Get CUDA"
-wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
-sudo mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
-curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub | gpg --dearmor > nvidia-cuda.gpg
-sudo mv nvidia-cuda.gpg /etc/apt/trusted.gpg.d/
-sudo add-apt-repository -y "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /"
+wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-keyring_1.0-1_all.deb
+sudo dpkg -i cuda-keyring_1.0-1_all.deb
 sudo apt update
 sudo apt install -y cuda-drivers
 sudo apt install -y cuda-11-7
-#sudo apt install -y libcudnn8 libcudnn8-dev
+sudo apt install -y libcudnn8 libcudnn8-dev
 sudo sed -E 's;PATH="?(.+)";PATH="/usr/local/cuda/bin:\1";g' -i /etc/environment
 
 step "Install Bazel"
